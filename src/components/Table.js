@@ -2,8 +2,9 @@ import React, { useContext, useState } from 'react';
 import context from '../context/context';
 
 function Table() {
-  const { data, addFiltros,
+  const { data, addFiltros, removeFilters,
     filters, nameFilter, sorte,
+    setFilter, fetchApiPlanets,
   } = useContext(context);
   const [name, setName] = useState('');
   const [comparison, setComparison] = useState('maior que');
@@ -158,6 +159,36 @@ function Table() {
             ))
           ) : false
         }
+        {filters.length > 0 ? (
+          <>
+            {filters.map((e) => (
+              <li
+                data-testid="filter"
+                key={ e.column }
+              >
+                {e.column}
+                <button
+                  type="button"
+                  onClick={ () => {
+                    removeFilters(e);
+                  } }
+                >
+                  x
+                </button>
+              </li>
+            ))}
+            <button
+              type="button"
+              data-testid="button-remove-filters"
+              onClick={ () => {
+                setFilter([]);
+                fetchApiPlanets();
+              } }
+            >
+              remover todos os filtros
+            </button>
+          </>
+        ) : false}
       </table>
     </div>
   );

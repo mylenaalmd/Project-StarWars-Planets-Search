@@ -76,6 +76,28 @@ function Provider({ children }) {
     }
   };
 
+  const removeFilters = (filt) => {
+    const newFilters = filters.filter((item) => item !== filt);
+    setFilter(newFilters);
+    fetchApiPlanets().then((e) => {
+      newFilters.forEach((f) => {
+        setData(e.filter((planet) => planet[f.column] !== 'unknown'));
+        switch (f.comparison) {
+        case 'maior que':
+          setData(e.filter((planet) => parseInt(planet[f.column], 10) > f.valueNumber));
+          break;
+        case 'menor que':
+          setData(e.filter((planet) => parseInt(planet[f.column], 10) < f.valueNumber));
+          break;
+        default:
+          setData(e.filter((planet) => parseInt(
+            planet[f.column], 10,
+          ) === parseInt(f.valueNumber, 10)));
+        }
+      });
+    });
+  };
+
   return (
     <Context.Provider
       value={ {
@@ -86,6 +108,7 @@ function Provider({ children }) {
         nameFilter,
         addFiltros,
         sorte,
+        removeFilters,
       } }
     >
       {children}
