@@ -5,7 +5,7 @@ import Context from './context';
 function Provider({ children }) {
   const [data, setData] = useState();
   const [filters, setFilter] = useState([]);
-  const [retornoApi, setRetornoApi] = useState('https://swapi-trybe.herokuapp.com/api/planets/');
+  // const [retornoApi, setRetornoApi] = useState('https://swapi-trybe.herokuapp.com/api/planets/');
 
   const fetchApiPlanets = async () => {
     const dataPlanet = await fetch('https://swapi-trybe.herokuapp.com/api/planets/')

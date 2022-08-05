@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import App from '../App';
 import testData from '../../cypress/mocks/testData'
 import userEvent from '@testing-library/user-event';
@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 //   const linkElement = screen.getByText(/Hello, App!/i);
 //   expect(linkElement).toBeInTheDocument();
 // });
-
 
 describe('Teste da aplicação', () => {
     beforeEach(()=>{
@@ -77,6 +76,57 @@ describe('Teste da aplicação', () => {
       fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '4000'}});
       userEvent.click(addFilter);
       waitFor(() => expect(tatooine).not.toBeInTheDocument())
+    })
+    it('teste de ordem ascendente', async() => {
+      render(<App />);
+      await waitFor(()=> expect(screen.getAllByTestId('planet-name').length).toBe(10))
+      const rowEndor = await screen.findByRole('row', {name: /endor/i});
+      const endor = within(rowEndor).queryByTestId('planet-name');
+      userEvent.selectOptions(
+        screen.getByTestId('column-sort'),
+        screen.getAllByRole('option', { name: 'diameter'})[1],
+        );
+        const ASC = screen.getByTestId('column-sort-input-asc');
+        userEvent.click(ASC);
+        const btnORDER = screen.getByRole('button', {name: /ordenar por/i});
+        userEvent.click(btnORDER);
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(10))
+      const rows = await screen.findAllByRole('row');
+      const el =await within(rows[1]).findByTestId('planet-name');
+      await waitFor(() => expect(within(screen.getAllByRole('row')[1])
+      .getAllByTestId('planet-name')).toStrictEqual(el))
+    })
+    it('teste de ordem decrescente', async() => {
+      render(<App />);
+      await waitFor(()=> expect(screen.getAllByTestId('planet-name').length).toBe(10))
+      const rowBespin = await screen.findByRole('row', {name: /bespin/i});
+      const bespin = within(rowBespin).queryByTestId('planet-name');
+      userEvent.selectOptions(
+        screen.getByTestId('column-sort'),
+        screen.getAllByRole('option', { name: 'diameter'})[1],
+        );
+        const DESC = screen.getByTestId('column-sort-input-desc');
+        userEvent.click(DESC);
+        const btnORDER = screen.getByRole('button', {name: /ordenar por/i});
+        userEvent.click(btnORDER);
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(10))
+      const rows = await screen.findAllByRole('row');
+      const el =await within(rows[1]).findByTestId('planet-name');
+      expect(el).toStrictEqual(bespin)
+    })
+    it('teste remover filtros', async ()=> {
+      render(<App />)
+      const addFilter = screen.getByRole('button', {name: /adicionar filtros/i});
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(10))
+      userEvent.selectOptions(
+        screen.getByTestId('comparison-filter'),
+        screen.getByRole('option', {name: 'menor que'}),
+        )
+        fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '2000000000'}});
+        userEvent.click(addFilter);
+        const removeFilters = await screen.findAllByRole('button', {name: /x/i});
+      userEvent.click(removeFilters[0]);
+      expect(fetch).toBeCalledTimes(1);
     })
 
   
