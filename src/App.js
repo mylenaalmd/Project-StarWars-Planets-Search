@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
 import Provider from './context/Provider';
-import Home from './Pages/Home';
+import Table from './components/Table';
 
 function App() {
   return (
     <>
       <span>Welcome!!</span>
       <Provider>
-        <Home />
+        <Table />
       </Provider>
     </>
   );

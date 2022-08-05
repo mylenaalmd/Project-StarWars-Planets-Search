@@ -5,6 +5,7 @@ import Context from './context';
 function Provider({ children }) {
   const [data, setData] = useState();
   const [filters, setFilter] = useState([]);
+  const [retornoApi, setRetornoApi] = useState('https://swapi-trybe.herokuapp.com/api/planets/');
 
   const fetchApiPlanets = async () => {
     const dataPlanet = await fetch('https://swapi-trybe.herokuapp.com/api/planets/')
@@ -78,21 +79,27 @@ function Provider({ children }) {
 
   const removeFilters = (filt) => {
     const newFilters = filters.filter((item) => item !== filt);
-    setFilter(newFilters);
-    fetchApiPlanets().then((e) => {
+    console.log(newFilters);
+    setRetornoApi().then((e) => {
       newFilters.forEach((f) => {
         setData(e.filter((planet) => planet[f.column] !== 'unknown'));
         switch (f.comparison) {
         case 'maior que':
-          setData(e.filter((planet) => parseInt(planet[f.column], 10) > f.valueNumber));
+          setData(
+            e.filter((planet) => parseInt(planet[f.column], 10) > f.valueNumber),
+          );
           break;
         case 'menor que':
-          setData(e.filter((planet) => parseInt(planet[f.column], 10) < f.valueNumber));
+          setData(
+            e.filter((planet) => parseInt(planet[f.column], 10) < f.valueNumber),
+          );
           break;
         default:
-          setData(e.filter((planet) => parseInt(
-            planet[f.column], 10,
-          ) === parseInt(f.valueNumber, 10)));
+          setData(
+            e.filter((planet) => parseInt(
+              planet[f.column], 10,
+            ) === parseInt(f.valueNumber, 10)),
+          );
         }
       });
     });

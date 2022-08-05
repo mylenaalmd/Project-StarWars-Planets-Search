@@ -163,8 +163,8 @@ function Table() {
           <>
             {filters.map((e) => (
               <li
-                data-testid="filter"
                 key={ e.column }
+                data-testid="filter"
               >
                 {e.column}
                 <button
