@@ -12,6 +12,7 @@ function Table() {
   const [column, setColumn] = useState('population');
   const [sort, setSort] = useState('ASC');
   const [sortC, setSortC] = useState('population');
+  // const [remove, setRemove] = useState([]);
   const filter = {
     comparison,
     column,
@@ -161,22 +162,24 @@ function Table() {
         }
         {filters.length > 0 ? (
           <>
-            {filters.map((e) => (
-              <li
-                key={ e.column }
-                data-testid="filter"
-              >
-                {e.column}
-                <button
-                  type="button"
-                  onClick={ () => {
-                    removeFilters(e);
-                  } }
+            {filters.map(
+              (element) => (
+                <li
+                  key={ element.column }
+                  data-testid="filter"
                 >
-                  x
-                </button>
-              </li>
-            ))}
+                  {element.column}
+                  <button
+                    type="button"
+                    onClick={ () => {
+                      removeFilters(element);
+                    } }
+                  >
+                    x
+                  </button>
+                </li>
+              ),
+            )}
             <button
               type="button"
               data-testid="button-remove-filters"

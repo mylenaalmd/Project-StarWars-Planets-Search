@@ -5,7 +5,8 @@ import Context from './context';
 function Provider({ children }) {
   const [data, setData] = useState();
   const [filters, setFilter] = useState([]);
-  // const [retornoApi, setRetornoApi] = useState('https://swapi-trybe.herokuapp.com/api/planets/');
+  const [original, setOriginalData] = useState();
+  // const [retornoApi] = useState('https://swapi-trybe.herokuapp.com/api/planets/');
 
   const fetchApiPlanets = async () => {
     const dataPlanet = await fetch('https://swapi-trybe.herokuapp.com/api/planets/')
@@ -20,7 +21,8 @@ function Provider({ children }) {
       return true;
     });
     setData(planetsSorted);
-    console.log(planetsSorted);
+    setOriginalData(planetsSorted);
+    // console.log(planetsSorted);
   };
 
   useEffect(() => {
@@ -78,31 +80,32 @@ function Provider({ children }) {
   };
 
   const removeFilters = (filt) => {
-    const newFilters = filters.filter((item) => item !== filt);
-    console.log(newFilters);
-    setRetornoApi().then((e) => {
-      newFilters.forEach((f) => {
-        setData(e.filter((planet) => planet[f.column] !== 'unknown'));
-        switch (f.comparison) {
-        case 'maior que':
-          setData(
-            e.filter((planet) => parseInt(planet[f.column], 10) > f.valueNumber),
-          );
-          break;
-        case 'menor que':
-          setData(
-            e.filter((planet) => parseInt(planet[f.column], 10) < f.valueNumber),
-          );
-          break;
-        default:
-          setData(
-            e.filter((planet) => parseInt(
-              planet[f.column], 10,
-            ) === parseInt(f.valueNumber, 10)),
-          );
-        }
-      });
+    const newFilters = filters.filter((element) => element !== filt);
+    setFilter(newFilters);
+    // fetchApiPlanets().then((e) => {
+    setData(original);
+    newFilters.forEach((f) => {
+      // setData(original.filter((planet) => planet[f.column] !== 'unknown'));
+      switch (f.comparison) {
+      case 'maior que':
+        setData(
+          original.filter((planet) => parseInt(planet[f.column], 10) > f.valueNumber),
+        );
+        break;
+      case 'menor que':
+        setData(
+          original.filter((planet) => parseInt(planet[f.column], 10) < f.valueNumber),
+        );
+        break;
+      default:
+        setData(
+          original.filter((planet) => parseInt(
+            planet[f.column], 10,
+          ) === parseInt(f.valueNumber, 10)),
+        );
+      }
     });
+    // });
   };
 
   return (

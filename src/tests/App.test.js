@@ -47,7 +47,7 @@ describe('Teste da aplicação', () => {
       userEvent.click(buttonFilter);
       waitFor(() => expect(tatooine).not.toBeInTheDocument())
     })
-    it('teste do filtro population sendo < 4000', async ()=> {
+    it('teste do filtro population sendo < 2000', async ()=> {
       render(<App />);
       const planeta = await screen.findAllByTestId('planet-name');
       const tatooine = await screen.findByText('Tatooine')
@@ -58,11 +58,11 @@ describe('Teste da aplicação', () => {
         screen.getByRole('option', {name: 'menor que'}),
       )
       expect(screen.getByRole('option', {name: 'menor que'}).selected).toBe(true)
-      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '4000'}});
+      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '2000'}});
       userEvent.click(addFilter);
       waitFor(() => expect(tatooine).not.toBeInTheDocument())
     })
-    it('teste do filtro population sendo = 4000', async ()=> {
+    it('teste do filtro population sendo = 1000', async ()=> {
       render(<App />);
       const planeta = await screen.findAllByTestId('planet-name');
       const tatooine = await screen.findByText('Tatooine')
@@ -73,7 +73,7 @@ describe('Teste da aplicação', () => {
         screen.getByRole('option', {name: 'igual a'}),
       )
       expect(screen.getByRole('option', {name: 'igual a'}).selected).toBe(true)
-      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '4000'}});
+      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '1000'}});
       userEvent.click(addFilter);
       waitFor(() => expect(tatooine).not.toBeInTheDocument())
     })
@@ -94,7 +94,7 @@ describe('Teste da aplicação', () => {
       const rows = await screen.findAllByRole('row');
       const el =await within(rows[1]).findByTestId('planet-name');
       await waitFor(() => expect(within(screen.getAllByRole('row')[1])
-      .getAllByTestId('planet-name')).toStrictEqual(el))
+      .getByTestId('planet-name')).toStrictEqual(endor))
     })
     it('teste de ordem decrescente', async() => {
       render(<App />);
@@ -124,6 +124,40 @@ describe('Teste da aplicação', () => {
         )
         fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '2000000000'}});
         userEvent.click(addFilter);
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(5))
+        userEvent.selectOptions(
+          screen.getByTestId('comparison-filter'),
+          screen.getByRole('option', {name: 'menor que'}),
+          )
+        userEvent.selectOptions(
+          screen.getByTestId('column-filter'),
+          screen.getAllByRole('option', {name: 'rotation_period'})[0],
+        )
+      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '30'}});
+      userEvent.click(addFilter);
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(5))
+        userEvent.selectOptions(
+          screen.getByTestId('comparison-filter'),
+          screen.getByRole('option', {name: 'maior que'}),
+          )
+        userEvent.selectOptions(
+          screen.getByTestId('column-filter'),
+          screen.getAllByRole('option', {name: 'diameter'})[0],
+        )
+      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '5000'}});
+      userEvent.click(addFilter);
+      await waitFor(() => expect(screen.getAllByTestId('planet-name').length).toBe(4))
+        userEvent.selectOptions(
+          screen.getByTestId('comparison-filter'),
+          screen.getByRole('option', {name: 'igual a'}),
+          )
+        userEvent.selectOptions(
+          screen.getByTestId('column-filter'),
+          screen.getAllByRole('option', {name: 'orbital_period'})[0],
+        )
+      fireEvent.change(screen.getByTestId('value-filter'), {target: {value: '5110'}});
+      userEvent.click(addFilter);
+        
         const removeFilters = await screen.findAllByRole('button', {name: /x/i});
       userEvent.click(removeFilters[0]);
       expect(fetch).toBeCalledTimes(1);
